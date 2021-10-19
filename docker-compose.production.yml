@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  web:
+    image: ghcr.io/holodata/holodata
+    container_name: holodata.org
+    environment:
+      VIRTUAL_HOST: holodata.org
+      LETSENCRYPT_HOST: holodata.org
+    volumes:
+      - ./public:/var/www/html:ro
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+networks:
+  default:
+    name: webproxy
+    external: true

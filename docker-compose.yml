@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  web:
+    image: ghcr.io/holodata/holodata
+    build: ./docker/web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html:ro
