@@ -1,3 +1,5 @@
+all: deploy
+
 build:
 	docker-compose build --pull
 
