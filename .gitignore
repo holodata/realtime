@@ -1,6 +1,5 @@
 .vscode
 .envrc
-/public
 /build
 /tmp
 
