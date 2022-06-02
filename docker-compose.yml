@@ -3,8 +3,13 @@ version: "3"
 services:
   web:
     image: ghcr.io/holodata/holodata
-    build: ./docker/web
+    build: .
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      KAFKA_HOST: takos:9093
+    extra_hosts:
+      takos: ${KAFKA_REAL_IP}
     ports:
-      - "8080:80"
-    volumes:
-      - ./public:/var/www/html:ro
+      - "3000:3000"

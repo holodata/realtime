@@ -2,16 +2,19 @@ version: "3"
 
 services:
   web:
-    restart: unless-stopped
     image: ghcr.io/holodata/holodata
     container_name: holodata.org
+    restart: unless-stopped
     environment:
       VIRTUAL_HOST: holodata.org
       LETSENCRYPT_HOST: holodata.org
-    volumes:
-      - ./public:/var/www/html:ro
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      KAFKA_HOST: takos:9093
     labels:
       com.centurylinklabs.watchtower.enable: "true"
+    extra_hosts:
+      takos: ${KAFKA_REAL_IP}
 networks:
   default:
     name: webproxy

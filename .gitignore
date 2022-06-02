@@ -3,6 +3,14 @@ package-lock.json
 yarn.lock
 .envrc
 /public
+/build
+/tmp
+
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.vercel
 
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
