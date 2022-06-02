@@ -1,4 +1,4 @@
-all: deploy
+all: build push deploy
 
 build:
 	docker-compose build --pull
@@ -6,6 +6,6 @@ build:
 push:
 	docker-compose push
 
-deploy: build
+deploy:
 	docker rm -f holodata.org
 	docker-compose -f docker-compose.production.yml up -d

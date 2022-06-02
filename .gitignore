@@ -2,6 +2,7 @@
 .envrc
 /build
 /tmp
+/storage
 
 .env.local
 .env.development.local
