@@ -14,6 +14,12 @@ const Home: NextPage = () => {
         <title>Holodata</title>
         <meta name="description" content="data shrimp collective" />
         <link rel="icon" href="/logo.svg" />
+        <script
+          async
+          defer
+          data-website-id="83ae72bb-13d0-443c-8d97-15a24b2a4685"
+          src="https://analytics.uechi.io/umami.js"
+        ></script>
       </Head>
       <Tsumiki />
       <div style={{ position: "absolute", top: 20, left: 20 }}>
