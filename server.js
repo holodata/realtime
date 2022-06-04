@@ -15,7 +15,7 @@ const kafkaHostname = process.env.KAFKA_HOST;
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
-const MAX_CACHE_ENTRY = 20;
+const MAX_CACHE_ENTRY = 90;
 const scCache = [];
 
 app.prepare().then(async () => {
@@ -38,12 +38,12 @@ app.prepare().then(async () => {
   const io = new Server(server);
 
   io.on("connection", (socket) => {
-    console.log("a user connected");
+    console.log("a user connected:", socket.id);
 
     socket.emit("superchats", scCache);
 
-    socket.on("disconnect", () => {
-      console.log("user disconnected");
+    socket.on("disconnect", (reason) => {
+      console.log("user disconnected:", reason);
     });
   });
 

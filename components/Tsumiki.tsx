@@ -7,7 +7,7 @@ import {
   useSphere,
 } from "@react-three/cannon";
 import { Canvas, Color, useFrame } from "@react-three/fiber";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import * as T from "three";
 import { Mesh } from "three";
 import useSocket, { SuperChat } from "../utils/kafka";
@@ -22,7 +22,7 @@ interface Item {
   sig: number;
 }
 
-const ibg = new T.IcosahedronBufferGeometry(2);
+// const ibg = new T.IcosahedronBufferGeometry(2);
 
 const sigMap = {
   1: "rgb(21, 101, 192)",
@@ -115,7 +115,7 @@ export function Tsumiki() {
   //   });
   // });
 
-  useSocket("superchats", (events: SuperChat[]) => {
+  const handleSuperChats = useCallback((events: SuperChat[]) => {
     for (const e of events) {
       console.log(e.amo, e.cur);
     }
@@ -129,7 +129,9 @@ export function Tsumiki() {
       });
       return [...prev, ...newer].slice(-100);
     });
-  });
+  }, []);
+
+  useSocket("superchats", handleSuperChats);
 
   // const transition = useTransition(chats, {
   //   from: { scale: [0, 0, 0] },
