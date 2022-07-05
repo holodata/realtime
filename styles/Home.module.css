@@ -1,16 +1,19 @@
 .container {
-  height: 100vh;
+  height: 100%;
   background: #0f041a;
 }
 
 .header {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  padding: 20px;
   display: flex;
   flex-direction: row;
   /* justify-content: center; */
   align-items: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
 }
 
 .header > a {
@@ -27,19 +30,17 @@
   opacity: 0.8;
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 900px) {
   .header {
-    top: unset;
-    /* left: unset; */
-    /* right: 20px; */
-    bottom: 20px;
+    /* top: unset; */
+    /* bottom: 0; */
     flex-direction: column;
     align-items: flex-start;
+    /* background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)); */
   }
 
   .header > a {
     margin-bottom: 20px;
-    text-shadow: 0 0 20px #0f041a;
   }
 
   .logo {

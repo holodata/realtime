@@ -1,27 +1,55 @@
+.toastifyContainer {
+  padding: 0 !important;
+}
+
+.toastifyBody {
+  padding: 0 !important;
+}
+
 .toastHeader {
-  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 12px;
+}
+
+.toastTitle {
   display: flex;
   align-items: center;
 }
 
-.toastTitle {
+.toastAvatar {
+  border-radius: 50%;
+}
+
+.toastAuthor {
   padding-left: 5px;
 }
 
+.toastSubtitle {
+  color: rgba(0, 0, 0, 0.4);
+  margin-left: 15px;
+  font-size: 0.8rem;
+}
+
 .toastContent {
+  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .toastBody {
-  font-size: 1.2rem;
-  font-weight: 500;
+  /* padding: 0; */
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 .toastAction {
+  padding: 4px 10px;
   border: 2px solid rgba(0, 0, 0, 0.5);
   border-radius: 4px;
-  padding: 4px 10px;
+  font-weight: 600;
   font-size: 0.8rem;
 }

@@ -133,7 +133,7 @@ app.prepare().then(async () => {
   server.listen(port, (err) => {
     if (err) throw err;
 
-    schedule.scheduleJob("*/10 * * * *", refreshLiveStreams);
+    schedule.scheduleJob("*/5 * * * *", refreshLiveStreams);
 
     console.log(`> Ready on http://${hostname}:${port}`);
   });

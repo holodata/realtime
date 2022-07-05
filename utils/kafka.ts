@@ -39,7 +39,7 @@ export default function useSocket<T>(eventName: string, cb: (data: T) => void) {
       socket.emit("init");
     }
 
-    return function useSocketCleanup() {
+    return () => {
       socket.off(eventName, cb);
     };
   }, [eventName, cb]);

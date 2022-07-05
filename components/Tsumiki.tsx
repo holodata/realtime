@@ -7,7 +7,7 @@ import {
   useSphere,
 } from "@react-three/cannon";
 import { Canvas, Color, useFrame } from "@react-three/fiber";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as T from "three";
 import { Mesh } from "three";
 import useSocket, { SuperChat } from "../utils/kafka";
@@ -35,7 +35,7 @@ const sigMap = {
   2: "rgb(0, 229, 255)",
   3: "rgb(29, 233, 141)",
   4: "rgb(255, 202, 40)",
-  5: "rgb(245, 124, 0)",
+  5: "rgb(238, 160, 34)",
   6: "rgb(235, 50, 112)",
   7: "rgb(239, 51, 41)",
 } as Record<number, Color>;
@@ -49,6 +49,17 @@ const textColorMap = {
   6: "rgb(60, 11, 27)",
   7: "rgb(40, 17, 17)",
 } as Record<number, string>;
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 900px)");
+    setIsMobile(mq.matches);
+  }, []);
+
+  return isMobile;
+}
 
 function sigToColor(sig: number): Color {
   return sigMap[sig] ?? "black";
@@ -115,7 +126,9 @@ function Sphere({ position, sig }: { position?: Triplet; sig: number }) {
 export function Tsumiki() {
   const [items, setItems] = useState<Item[]>([]);
   // const [chats, setChats] = useState<Item[]>([]);
+
   const initialized = useRef<boolean>(false);
+  const isMobile = useIsMobile();
 
   // useSocket("chats", (events: Chat[]) => {
   //   setChats((prev) => {
@@ -133,46 +146,59 @@ export function Tsumiki() {
   // });
 
   const handleSuperChats = useCallback((events: SuperChat[]) => {
-    if (initialized.current) {
-      for (const e of events.slice(0, 10)) {
-        // console.log(e);
-        toast(
-          <>
-            <div className={styles.toastHeader}>
+    function deployToast(e: SuperChat) {
+      // console.log(e);
+      toast(
+        <>
+          <div className={styles.toastHeader}>
+            <div className={styles.toastTitle}>
               {e.photo && (
-                <Image width={20} height={20} alt={e.channel} src={e.photo} />
+                <Image
+                  width={20}
+                  height={20}
+                  alt={e.channel}
+                  src={e.photo}
+                  className={styles.toastAvatar}
+                />
               )}
               <a
                 href={`https://www.youtube.com/channel/${e.ocid}`}
                 target="_blank"
                 rel="noreferrer"
-                className={styles.toastTitle}
+                className={styles.toastAuthor}
               >
                 {e.channel}
               </a>
             </div>
-            <div className={styles.toastContent}>
-              <div className={styles.toastBody}>
-                {e.amo} {e.cur}
-              </div>
-              <a
-                href={`https://www.youtube.com/watch?v=${e.ovid}`}
-                className={styles.toastAction}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Go to Stream
-              </a>
+            <div className={styles.toastSubtitle}>Right Now</div>
+          </div>
+          <div className={styles.toastContent}>
+            <div className={styles.toastBody}>
+              {e.amo} {e.cur}
             </div>
-          </>,
-          {
-            style: {
-              background: sigMap[e.sig] as string,
-              color: textColorMap[e.sig],
-            },
-          }
-        );
-      }
+            <a
+              href={`https://www.youtube.com/watch?v=${e.ovid}`}
+              className={styles.toastAction}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Go to Stream
+            </a>
+          </div>
+        </>,
+        {
+          style: {
+            background: sigMap[e.sig] as string,
+            color: textColorMap[e.sig],
+          },
+        }
+      );
+    }
+
+    if (initialized.current) {
+      events.forEach((e, i) =>
+        setTimeout(() => deployToast(e), i * ((Math.random() + 0.5) * 1000))
+      );
     }
 
     initialized.current = true;
@@ -181,7 +207,7 @@ export function Tsumiki() {
       const newer = events.map((e) => {
         return {
           id: e.id,
-          position: [rand() * 5 + 10, rand() * 3 + 20, rand() * 20],
+          position: [rand() * 5 + 10, rand() * 5 + 20, rand() * 10],
           sig: e.sig,
         } as Item;
       });
@@ -238,13 +264,18 @@ export function Tsumiki() {
         </Physics>
       </Canvas>
       <ToastContainer
-        position={"top-right"}
-        autoClose={10000}
+        position={"bottom-left"}
+        newestOnTop={true}
+        autoClose={isMobile ? 3000 : 10000}
         hideProgressBar={false}
         closeOnClick={false}
         pauseOnHover={true}
+        pauseOnFocusLoss={false}
+        draggable={false}
         closeButton={false}
-        limit={3}
+        toastClassName={styles.toastifyContainer}
+        bodyClassName={styles.toastifyBody}
+        limit={isMobile ? 3 : undefined}
         theme={"light"}
       />
     </>

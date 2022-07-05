@@ -11,7 +11,7 @@ const Home: NextPage = () => {
     <div className={styles.container}>
       <Head>
         <title>Holodata</title>
-        <meta name="description" content="data shrimp collective" />
+        <meta name="description" content="big data shrimps" />
         <link rel="icon" href="/logo.svg" />
         <script
           async
