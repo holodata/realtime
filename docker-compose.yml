@@ -9,6 +9,7 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
       KAFKA_HOST: takos:9093
+      HOLODEX_API_KEY: ${HOLODEX_API_KEY}
     extra_hosts:
       takos: ${KAFKA_REAL_IP}
     ports:

@@ -11,6 +11,7 @@ services:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
       KAFKA_HOST: takos:9093
+      HOLODEX_API_KEY: ${HOLODEX_API_KEY}
     # labels:
     # com.centurylinklabs.watchtower.enable: "true"
     extra_hosts:
