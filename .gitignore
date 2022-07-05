@@ -3,6 +3,7 @@
 /build
 /tmp
 /storage
+/data
 
 .env.local
 .env.development.local

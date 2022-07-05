@@ -4,7 +4,8 @@ const uuidv4 = require("uuid").v4;
 const next = require("next");
 const { Server } = require("socket.io");
 const { Kafka } = require("kafkajs");
-const LRU = require("lru-cache");
+const axios = require("axios");
+const schedule = require("node-schedule");
 // const { groupBy } = require("masterchat");
 
 const dev = process.env.NODE_ENV !== "production";
@@ -15,8 +16,30 @@ const kafkaHostname = process.env.KAFKA_HOST;
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
+const HOLODEX_API_KEY = process.env.HOLODEX_API_KEY;
 const MAX_CACHE_ENTRY = 90;
+
 const scCache = [];
+let streamCache = [];
+
+async function refreshLiveStreams() {
+  try {
+    const res = await axios.get(
+      `https://holodex.net/api/v2/live?max_upcoming_hours=9999`,
+      {
+        headers: {
+          "user-agent": "holodata/holodata",
+          "X-APIKEY": HOLODEX_API_KEY,
+        },
+      }
+    );
+    const streams = res.data;
+    streamCache = streams;
+    console.log(`Refreshed ${streams.length} streams`);
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 app.prepare().then(async () => {
   const server = createServer(async (req, res) => {
@@ -40,10 +63,13 @@ app.prepare().then(async () => {
   io.on("connection", (socket) => {
     console.log("a user connected:", socket.id);
 
-    socket.emit("superchats", scCache);
-
     socket.on("disconnect", (reason) => {
       console.log("user disconnected:", reason);
+    });
+
+    socket.on("init", () => {
+      console.log("init request received:", socket.id);
+      socket.emit("superchats", scCache);
     });
   });
 
@@ -56,6 +82,8 @@ app.prepare().then(async () => {
   await consumer.connect();
   // await consumer.subscribe({ topic: "chats" });
   await consumer.subscribe({ topic: "superchats" });
+
+  await refreshLiveStreams();
 
   consumer.run({
     eachBatch: async ({ batch }) => {
@@ -71,7 +99,24 @@ app.prepare().then(async () => {
         case "superchats": {
           const messages = batch.messages
             .map((msg) => JSON.parse(msg.value.toString()))
-            .map((e) => ({ id: e.id, sig: e.sig, amo: e.amo, cur: e.cur }));
+            .map((e) => {
+              const stream = streamCache.find((stream) => stream.id === e.ovid);
+              const title = stream ? stream.title : e.ovid;
+              const channel = stream
+                ? stream.channel.english_name || stream.channel.name
+                : e.ocid;
+              return {
+                id: e.id,
+                sig: e.sig,
+                amo: e.amo,
+                cur: e.cur,
+                ocid: e.ocid,
+                ovid: e.ovid,
+                title,
+                channel,
+                photo: stream ? stream.channel.photo : undefined,
+              };
+            });
 
           io.sockets.emit("superchats", messages);
 
@@ -87,6 +132,9 @@ app.prepare().then(async () => {
   // Fire up server
   server.listen(port, (err) => {
     if (err) throw err;
+
+    schedule.scheduleJob("*/10 * * * *", refreshLiveStreams);
+
     console.log(`> Ready on http://${hostname}:${port}`);
   });
 });

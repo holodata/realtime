@@ -12,6 +12,9 @@ export interface SuperChat {
   ovid: string;
   sig: number;
   ts: string;
+  title: string;
+  channel: string;
+  photo?: string;
 }
 
 export interface Chat {
@@ -25,10 +28,16 @@ export interface Chat {
 }
 
 const socket = io();
+let socketInitialized = false;
 
 export default function useSocket<T>(eventName: string, cb: (data: T) => void) {
   useEffect(() => {
     socket.on(eventName, cb);
+
+    if (!socketInitialized) {
+      socketInitialized = true;
+      socket.emit("init");
+    }
 
     return function useSocketCleanup() {
       socket.off(eventName, cb);
