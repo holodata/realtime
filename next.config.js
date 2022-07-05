@@ -18,7 +18,7 @@ module.exports = {
       },
       {
         source: "/vtuber-1b",
-        destination: "https://github.com/holodata/vtuber-livechat",
+        destination: "https://github.com/holodata/vtuber-livechat-dataset",
         permanent: false,
       },
     ];
